@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert } from 'react-native';
+import { Alert, Image } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
 
 import {
@@ -86,7 +86,13 @@ export const Home: React.FC = () => {
           cardHorizontalMargin={0}
           containerStyle={containerStyle}
         >
-          <PointsText>PONTOS: {points}/21</PointsText>
+          <Card background="gray">
+            <Image
+              width={0}
+              height={0}
+              source={require('../../assets/images/stripes.png')}
+            />
+          </Card>
         </Swiper>
       </SwiperContainer>
     </Body>

@@ -6,6 +6,7 @@ const themeLight: DefaultTheme = {
     yellow: '#F2C94C',
     red: '#C74242',
     gray: '#C4C4C4',
+    white: '#fff',
   },
 };
 

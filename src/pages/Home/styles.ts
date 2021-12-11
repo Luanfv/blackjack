@@ -1,5 +1,9 @@
 import styled from 'styled-components/native';
 
+interface ICard {
+  background?: 'white' | 'gray';
+}
+
 export const Body = styled.View`
   flex: 1;
   justify-content: space-between;
@@ -14,14 +18,16 @@ export const SwiperContainer = styled.View`
   align-items: center;
 `;
 
-export const Card = styled.View`
+export const Card = styled.View<ICard>`
   position: relative;
   width: 160px;
   height: 250px;
   align-items: center;
   justify-content: center;
-  background-color: #fff;
+  background-color: ${({ theme, background = 'white' }) =>
+    theme.colors[background]};
   border-radius: 6px;
+  overflow: hidden;
 `;
 
 export const CardIconCenter = styled.Text`
