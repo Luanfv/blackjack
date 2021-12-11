@@ -1,6 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
+
+import {
+  Body,
+  Card,
+  CardIconBottom,
+  CardIconCenter,
+  CardIconTop,
+  PointsText,
+  SwiperContainer,
+} from './styles';
+
+const containerStyle = {
+  width: 160,
+  height: 250,
+  alignItems: 'center',
+  left: 'auto',
+  right: 'auto',
+};
 
 export const Home: React.FC = () => {
   const [points, setPoints] = useState(0);
@@ -28,61 +46,49 @@ export const Home: React.FC = () => {
   }, [index]);
 
   return (
-    <View style={styles.container}>
-      <Swiper
-        cards={cards}
-        showSecondCard={false}
-        renderCard={(card) => {
-          return (
-            <View style={styles.card}>
-              <Text style={styles.text}>{card}</Text>
-            </View>
-          );
-        }}
-        onSwipedTop={(cardIndex) => {
-          setPoints((point) => point + cards[cardIndex]);
-        }}
-        onSwipedRight={(cardIndex) => {
-          setPoints((point) => point + cards[cardIndex]);
-        }}
-        onSwipedBottom={() => {
-          Alert.alert('Acabou', `Você ficou com ${points} de 21!`);
-          setIndex(0);
-          setPoints(0);
-        }}
-        onSwipedLeft={() => {
-          Alert.alert('Acabou', `Você ficou com ${points} de 21!`);
-          setIndex(0);
-          setPoints(0);
-        }}
-        cardIndex={0}
-        backgroundColor={'#216d0a'}
-        stackSize={3}
-      >
-        <Text style={{ color: '#fff', fontSize: 24, textAlign: 'center' }}>
-          PONTOS: {points}/21
-        </Text>
-      </Swiper>
-    </View>
+    <Body>
+      <PointsText>PONTOS: {points}/21</PointsText>
+
+      <SwiperContainer>
+        <Swiper
+          cards={cards}
+          showSecondCard={false}
+          renderCard={(card) => {
+            return (
+              <Card>
+                <CardIconTop>{card}</CardIconTop>
+
+                <CardIconCenter>♣ ♥ ♠ ♦</CardIconCenter>
+
+                <CardIconBottom>{card}</CardIconBottom>
+              </Card>
+            );
+          }}
+          onSwipedTop={(cardIndex) => {
+            setPoints((point) => point + cards[cardIndex]);
+          }}
+          onSwipedRight={(cardIndex) => {
+            setPoints((point) => point + cards[cardIndex]);
+          }}
+          onSwipedBottom={() => {
+            Alert.alert('Acabou', `Você ficou com ${points} de 21!`);
+            setIndex(0);
+            setPoints(0);
+          }}
+          onSwipedLeft={() => {
+            Alert.alert('Acabou', `Você ficou com ${points} de 21!`);
+            setIndex(0);
+            setPoints(0);
+          }}
+          cardIndex={0}
+          backgroundColor="transparent"
+          cardVerticalMargin={0}
+          cardHorizontalMargin={0}
+          containerStyle={containerStyle}
+        >
+          <PointsText>PONTOS: {points}/21</PointsText>
+        </Swiper>
+      </SwiperContainer>
+    </Body>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5FCFF',
-  },
-  card: {
-    flex: 1,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: '#E8E8E8',
-    justifyContent: 'center',
-    backgroundColor: 'white',
-  },
-  text: {
-    textAlign: 'center',
-    fontSize: 50,
-    backgroundColor: 'transparent',
-  },
-});
