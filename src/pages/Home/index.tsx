@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Alert, Image } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
 
@@ -22,28 +22,22 @@ const containerStyle = {
 
 export const Home: React.FC = () => {
   const [points, setPoints] = useState(0);
-  const [index, setIndex] = useState(0);
   const [cards, setCards] = useState<number[]>([]);
 
-  useEffect(() => {
-    if (points > 21) {
-      Alert.alert('Perdeu', 'Você perdeu, seus pontos passaram de 21!');
-      setPoints(0);
-      setIndex(0);
+  const updateInfos = useCallback(() => {
+    let values: number[] = [];
+
+    for (let i = 0; i < 20; i++) {
+      const value = Math.floor(Math.random() * 10) + 1;
+
+      values.push(value);
     }
-  }, [points]);
 
-  useEffect(() => {
-    if (index === 0) {
-      let values = [];
+    setPoints(values[0]);
+    setCards(values);
+  }, []);
 
-      for (let i = 0; i < 20; i++) {
-        values.push(Math.floor(Math.random() * 10) + 1);
-      }
-
-      setCards(values);
-    }
-  }, [index]);
+  useEffect(updateInfos, [updateInfos]);
 
   return (
     <Body>
@@ -58,27 +52,44 @@ export const Home: React.FC = () => {
               <Card>
                 <CardIconTop>{card}</CardIconTop>
 
-                <CardIconCenter>♣ ♥ ♠ ♦</CardIconCenter>
+                <CardIconCenter>♣ ♥</CardIconCenter>
+                <CardIconCenter>♦ ♠</CardIconCenter>
 
                 <CardIconBottom>{card}</CardIconBottom>
               </Card>
             );
           }}
           onSwipedTop={(cardIndex) => {
-            setPoints((point) => point + cards[cardIndex]);
+            const myPoints = points + cards[cardIndex + 1];
+
+            if (myPoints > 21) {
+              Alert.alert('Perdeu', `Você fez ${myPoints} e passou de 21!`);
+              updateInfos();
+
+              return;
+            }
+
+            setPoints(myPoints);
           }}
           onSwipedRight={(cardIndex) => {
-            setPoints((point) => point + cards[cardIndex]);
+            const myPoints = points + cards[cardIndex + 1];
+
+            if (myPoints > 21) {
+              Alert.alert('Perdeu', `Você fez ${myPoints} e passou de 21!`);
+              updateInfos();
+
+              return;
+            }
+
+            setPoints(myPoints);
           }}
           onSwipedBottom={() => {
             Alert.alert('Acabou', `Você ficou com ${points} de 21!`);
-            setIndex(0);
-            setPoints(0);
+            updateInfos();
           }}
           onSwipedLeft={() => {
             Alert.alert('Acabou', `Você ficou com ${points} de 21!`);
-            setIndex(0);
-            setPoints(0);
+            updateInfos();
           }}
           cardIndex={0}
           backgroundColor="transparent"
