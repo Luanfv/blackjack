@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 interface ICard {
   background?: 'white' | 'gray';
@@ -49,7 +50,17 @@ export const CardIconBottom = styled.Text`
 `;
 
 export const PointsText = styled.Text`
-  color: #fff;
+  color: ${({ theme }) => theme.colors.white};
   font-size: 24px;
   text-align: center;
+`;
+
+export const Icon = styled(AntDesign)`
+  position: absolute;
+  color: ${({ theme }) => theme.colors.white};
+  flex: 1;
+  left: 50%;
+  right: 50%;
+  bottom: 50%;
+  top: 50%;
 `;

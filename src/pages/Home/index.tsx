@@ -10,6 +10,7 @@ import {
   CardIconTop,
   PointsText,
   SwiperContainer,
+  Icon,
 } from './styles';
 
 const containerStyle = {
@@ -23,6 +24,7 @@ const containerStyle = {
 export const Home: React.FC = () => {
   const [points, setPoints] = useState(0);
   const [cards, setCards] = useState<number[]>([]);
+  const [iconName, setIconName] = useState('');
 
   const updateInfos = useCallback(() => {
     let values: number[] = [];
@@ -35,12 +37,15 @@ export const Home: React.FC = () => {
 
     setPoints(values[0]);
     setCards(values);
+    setIconName('');
   }, []);
 
   useEffect(updateInfos, [updateInfos]);
 
   return (
     <Body>
+      {!!iconName && <Icon name={iconName} size={40} />}
+
       <PointsText>PONTOS: {points}/21</PointsText>
 
       <SwiperContainer>
@@ -96,6 +101,33 @@ export const Home: React.FC = () => {
           cardVerticalMargin={0}
           cardHorizontalMargin={0}
           containerStyle={containerStyle}
+          onSwiping={(x: number, y: number) => {
+            if (x > 70) {
+              setIconName('checkcircleo');
+
+              return;
+            }
+
+            if (x < -70) {
+              setIconName('closecircleo');
+
+              return;
+            }
+
+            if (y < -70) {
+              setIconName('checkcircleo');
+
+              return;
+            }
+
+            if (y > 70) {
+              setIconName('closecircleo');
+
+              return;
+            }
+
+            setIconName('');
+          }}
         >
           <Card background="gray">
             <Image
