@@ -1,88 +1,143 @@
-import React, { useState, useEffect } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Alert, Image } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
+
+import {
+  Body,
+  Card,
+  CardIconBottom,
+  CardIconCenter,
+  CardIconTop,
+  PointsText,
+  SwiperContainer,
+  Icon,
+} from './styles';
+
+const containerStyle = {
+  width: 160,
+  height: 250,
+  alignItems: 'center',
+  left: 'auto',
+  right: 'auto',
+};
 
 export const Home: React.FC = () => {
   const [points, setPoints] = useState(0);
-  const [index, setIndex] = useState(0);
   const [cards, setCards] = useState<number[]>([]);
+  const [iconName, setIconName] = useState('');
 
-  useEffect(() => {
-    if (points > 21) {
-      Alert.alert('Perdeu', 'Você perdeu, seus pontos passaram de 21!');
-      setPoints(0);
-      setIndex(0);
+  const updateInfos = useCallback(() => {
+    let values: number[] = [];
+
+    for (let i = 0; i < 20; i++) {
+      const value = Math.floor(Math.random() * 10) + 1;
+
+      values.push(value);
     }
-  }, [points]);
 
-  useEffect(() => {
-    if (index === 0) {
-      let values = [];
+    setPoints(values[0]);
+    setCards(values);
+    setIconName('');
+  }, []);
 
-      for (let i = 0; i < 20; i++) {
-        values.push(Math.floor(Math.random() * 10) + 1);
-      }
-
-      setCards(values);
-    }
-  }, [index]);
+  useEffect(updateInfos, [updateInfos]);
 
   return (
-    <View style={styles.container}>
-      <Swiper
-        cards={cards}
-        showSecondCard={false}
-        renderCard={(card) => {
-          return (
-            <View style={styles.card}>
-              <Text style={styles.text}>{card}</Text>
-            </View>
-          );
-        }}
-        onSwipedTop={(cardIndex) => {
-          setPoints((point) => point + cards[cardIndex]);
-        }}
-        onSwipedRight={(cardIndex) => {
-          setPoints((point) => point + cards[cardIndex]);
-        }}
-        onSwipedBottom={() => {
-          Alert.alert('Acabou', `Você ficou com ${points} de 21!`);
-          setIndex(0);
-          setPoints(0);
-        }}
-        onSwipedLeft={() => {
-          Alert.alert('Acabou', `Você ficou com ${points} de 21!`);
-          setIndex(0);
-          setPoints(0);
-        }}
-        cardIndex={0}
-        backgroundColor={'#216d0a'}
-        stackSize={3}
-      >
-        <Text style={{ color: '#fff', fontSize: 24, textAlign: 'center' }}>
-          PONTOS: {points}/21
-        </Text>
-      </Swiper>
-    </View>
+    <Body>
+      {!!iconName && <Icon name={iconName} size={40} />}
+
+      <PointsText>PONTOS: {points}/21</PointsText>
+
+      <SwiperContainer>
+        <Swiper
+          cards={cards}
+          showSecondCard={false}
+          renderCard={(card) => {
+            return (
+              <Card>
+                <CardIconTop>{card}</CardIconTop>
+
+                <CardIconCenter>♣ ♥</CardIconCenter>
+                <CardIconCenter>♦ ♠</CardIconCenter>
+
+                <CardIconBottom>{card}</CardIconBottom>
+              </Card>
+            );
+          }}
+          onSwipedTop={(cardIndex) => {
+            const myPoints = points + cards[cardIndex + 1];
+
+            if (myPoints > 21) {
+              Alert.alert('Perdeu', `Você fez ${myPoints} e passou de 21!`);
+              updateInfos();
+
+              return;
+            }
+
+            setPoints(myPoints);
+          }}
+          onSwipedRight={(cardIndex) => {
+            const myPoints = points + cards[cardIndex + 1];
+
+            if (myPoints > 21) {
+              Alert.alert('Perdeu', `Você fez ${myPoints} e passou de 21!`);
+              updateInfos();
+
+              return;
+            }
+
+            setPoints(myPoints);
+          }}
+          onSwipedBottom={() => {
+            Alert.alert('Acabou', `Você ficou com ${points} de 21!`);
+            updateInfos();
+          }}
+          onSwipedLeft={() => {
+            Alert.alert('Acabou', `Você ficou com ${points} de 21!`);
+            updateInfos();
+          }}
+          cardIndex={0}
+          backgroundColor="transparent"
+          cardVerticalMargin={0}
+          cardHorizontalMargin={0}
+          containerStyle={containerStyle}
+          onSwiping={(x: number, y: number) => {
+            if (x > 70) {
+              setIconName('checkcircleo');
+
+              return;
+            }
+
+            if (x < -70) {
+              setIconName('closecircleo');
+
+              return;
+            }
+
+            if (y < -70) {
+              setIconName('checkcircleo');
+
+              return;
+            }
+
+            if (y > 70) {
+              setIconName('closecircleo');
+
+              return;
+            }
+
+            setIconName('');
+          }}
+        >
+          <Card background="gray">
+            <Image
+              width={0}
+              height={0}
+              source={require('../../assets/images/stripes.png')}
+            />
+          </Card>
+        </Swiper>
+      </SwiperContainer>
+    </Body>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5FCFF',
-  },
-  card: {
-    flex: 1,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: '#E8E8E8',
-    justifyContent: 'center',
-    backgroundColor: 'white',
-  },
-  text: {
-    textAlign: 'center',
-    fontSize: 50,
-    backgroundColor: 'transparent',
-  },
-});

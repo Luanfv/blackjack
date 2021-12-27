@@ -4,6 +4,7 @@ interface IStyleGuide {
     yellow: string;
     red: string;
     gray: string;
+    white: string;
   };
 }
 
