@@ -1,4 +1,4 @@
-package com.blackjack;
+package com.luanfv.blackjack;
 
 import com.facebook.react.ReactActivity;
 
